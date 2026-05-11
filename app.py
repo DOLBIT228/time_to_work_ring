@@ -4,6 +4,44 @@ import time
 import streamlit as st
 import plotly.express as px
 
+# =========================================================
+# AUTH
+# =========================================================
+
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
+if not st.session_state.authenticated:
+
+    st.title("🔐 Авторизація")
+
+    login = st.text_input("Логін")
+
+    password = st.text_input(
+        "Пароль",
+        type="password"
+    )
+
+    if st.button("Увійти"):
+
+        if (
+            login == st.secrets["APP_LOGIN"]
+            and
+            password == st.secrets["APP_PASSWORD"]
+        ):
+
+            st.session_state.authenticated = True
+
+            st.rerun()
+
+        else:
+
+            st.error(
+                "Невірний логін або пароль"
+            )
+
+    st.stop()
+
 from datetime import (
     datetime,
     timedelta,
@@ -472,6 +510,12 @@ if run:
             str(date_from),
             str(date_to)
         )
+
+        st.session_state["df"] = df
+
+if "df" in st.session_state:
+
+    df = st.session_state["df"]
 
     valid_df = df[
         df["SLA Minutes"].notna()
