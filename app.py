@@ -62,7 +62,7 @@ MANAGERS = dict(
     st.secrets["MANAGERS"]
 )
 
-WORK_START = dt_time(10, 0)
+WORK_START = dt_time(10, 15)
 WORK_END = dt_time(19, 0)
 
 API_DELAY = 0.35
