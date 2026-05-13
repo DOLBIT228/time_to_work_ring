@@ -67,6 +67,8 @@ WORK_END = dt_time(19, 0)
 
 API_DELAY = 0.35
 
+TAKEN_BY_FIELD = "UF_CRM_1778665985"
+
 # =========================================================
 # PAGE
 # =========================================================
@@ -249,7 +251,8 @@ def get_all_deals(date_from, date_to):
                 "TITLE",
                 "DATE_CREATE",
                 "ASSIGNED_BY_ID",
-                "CATEGORY_ID"
+                "CATEGORY_ID",
+                TAKEN_BY_FIELD
             ],
 
             "start": start
@@ -359,12 +362,35 @@ def run_analysis(date_from, date_to):
 
             deal_id = deal["ID"]
 
-            manager_id = str(
+            # =================================
+            # REAL SLA OWNER
+            # =================================
+
+            taken_by_id = str(
                 deal.get(
-                    "ASSIGNED_BY_ID",
+                    TAKEN_BY_FIELD,
                     ""
                 )
-            )
+            ).strip()
+
+            # Якщо automation field валідне
+            if (
+                taken_by_id
+                and
+                taken_by_id in MANAGERS
+            ):
+
+                manager_id = taken_by_id
+
+            # fallback на відповідального
+            else:
+
+                manager_id = str(
+                    deal.get(
+                        "ASSIGNED_BY_ID",
+                        ""
+                    )
+                ).strip()
 
             manager = MANAGERS.get(
                 manager_id,
